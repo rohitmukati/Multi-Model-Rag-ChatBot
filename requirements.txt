@@ -1,0 +1,5 @@
+google-generativeai
+sentence-transformers
+chromadb 
+python-dotenv 
+flask
