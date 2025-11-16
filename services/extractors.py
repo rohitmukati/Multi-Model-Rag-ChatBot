@@ -182,7 +182,7 @@ class FileExtractor:
             return {"success": False, "error": str(e)}
 
     # -----------------------------
-    # VIDEO EXTRACTION (YOUR FINAL CODE)
+    # VIDEO EXTRACTION (FIXED)
     # -----------------------------
     def extract_video(self, path: str, frame_seconds: float = FRAME_EVERY_SECONDS) -> Dict[str, Any]:
 
@@ -262,8 +262,14 @@ class FileExtractor:
 
         logging.info("=== VIDEO EXTRACTION FINISHED ===")
 
+        # ✅ FIX: Combine captions and transcript into 'text' field
+        combined_text = "\n".join([f"[{c['time']}s] {c['caption']}" for c in captions])
+        combined_text += f"\n\nAudio Transcript:\n{transcript}"
+
         return {
             "success": True,
+            "text": combined_text,  # ✅ Added this
+            "file_type": "video",   # ✅ Added this
             "file_name": os.path.basename(path),
             "captions": captions,
             "audio_transcript": transcript
