@@ -35,15 +35,6 @@ class RAGDatabaseBuilder:
     ) -> Dict[str, Any]:
         """
         Build RAG database from multiple files
-        
-        Args:
-            file_paths: List of file paths to process
-            chunk_size: Characters per chunk
-            overlap: Overlap between chunks
-            project_id: Project/client identifier
-        
-        Returns:
-            Dict with build results and statistics
         """
         print("\n" + "="*70)
         print("🚀 BUILDING RAG DATABASE")
@@ -79,7 +70,6 @@ class RAGDatabaseBuilder:
                 
                 # Get extracted text
                 if extraction_result.get('file_type') == 'video':
-                    # For video, combine captions and transcript
                     captions_text = "\n".join([
                         f"[{c['time']}s] {c['caption']}" 
                         for c in extraction_result.get('captions', [])
@@ -120,7 +110,9 @@ class RAGDatabaseBuilder:
                 
                 # Step 4: Prepare metadata
                 for j, chunk in enumerate(chunks):
-                    metadata = chunk.get('metadata', {})
+                    # FIXED: create a fresh dict copy to avoid reusing same ref
+                    metadata = dict(chunk.get('metadata', {}))
+
                     metadata.update({
                         'chunk_index': j,
                         'total_chunks': len(chunks),
@@ -144,7 +136,7 @@ class RAGDatabaseBuilder:
                     'error': str(e)
                 })
         
-        # Step 5: Insert all into vector database
+        # Step 5: Insert into vector database
         if all_chunks:
             print("="*70)
             print("💾 STORING IN VECTOR DATABASE")
@@ -194,7 +186,6 @@ class RAGDatabaseBuilder:
     
     
     def get_database_stats(self) -> Dict[str, Any]:
-        """Get current database statistics"""
         return {
             'total_documents': self.vector_store.count(),
             'all_metadata': self.vector_store.get_all_metadata()
@@ -202,17 +193,15 @@ class RAGDatabaseBuilder:
     
     
     def clear_database(self) -> None:
-        """Clear entire database (use with caution!)"""
         self.vector_store.delete_collection()
         print("⚠️  Database cleared!")
 
 
-# Global builder instance
+# Singleton
 _builder = None
 
 
 def get_rag_builder() -> RAGDatabaseBuilder:
-    """Get or create RAG builder instance"""
     global _builder
     if _builder is None:
         _builder = RAGDatabaseBuilder()
@@ -225,48 +214,11 @@ def build_rag_database(
     overlap: int = 50,
     project_id: str = "default"
 ) -> Dict[str, Any]:
-    """
-    Build RAG database from files (simple API)
-    
-    Args:
-        file_paths: List of files to process
-        chunk_size: Chunk size in characters
-        overlap: Overlap between chunks
-        project_id: Project identifier
-    
-    Returns:
-        Build results
-    """
     builder = get_rag_builder()
     return builder.build_from_files(file_paths, chunk_size, overlap, project_id)
 
 
 def get_stats() -> Dict[str, Any]:
-    """Get database statistics"""
     builder = get_rag_builder()
     return builder.get_database_stats()
 
-
-if __name__ == "__main__":
-    # Example: Build RAG from test files
-    test_files = [
-        "Data/hair.txt",
-        "Data/Premature_graying_of_hair.pdf",
-        "Data/harvard.wav",
-        "Data/Screenshot 2025-11-15 142915.png",
-        "Data/videoplayback.mp4"
-    ]
-    
-    result = build_rag_database(
-        file_paths=test_files,
-        chunk_size=512,
-        overlap=50,
-        project_id="test_project"
-    )
-    
-    if result['success']:
-        print("\n✅ RAG Database built successfully!")
-        print(f"Processed {result['successful_files']} files")
-        print(f"Created {result['total_chunks']} chunks")
-    else:
-        print(f"\n❌ Build failed: {result.get('error')}")

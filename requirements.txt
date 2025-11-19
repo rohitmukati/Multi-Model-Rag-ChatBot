@@ -1,5 +1,13 @@
-google-generativeai
+Flask
+flask-cors
+numpy
+chromadb
 sentence-transformers
-chromadb 
-python-dotenv 
-flask
+python-dotenv
+google-genai
+opencv-python
+whisper
+PyPDF2
+python-docx
+ffmpeg-python
+torch
