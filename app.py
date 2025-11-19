@@ -1,5 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 from routes.db_routes import router as db_router
 
@@ -9,7 +12,7 @@ app = FastAPI(
     description="API for building and querying permanent RAG vector database"
 )
 
-# CORS (allow everything for now — adjust as needed)
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,10 +21,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Routers
+# Serve static files if needed
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Templates folder
+templates = Jinja2Templates(directory="templates")
+
+# Include backend routes
 app.include_router(db_router)
 
-
-@app.get("/")
-async def root():
-    return {"status": "ok", "message": "RAG API running"}
+# Serve frontend on root
+@app.get("/", response_class=HTMLResponse)
+async def serve_frontend(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
