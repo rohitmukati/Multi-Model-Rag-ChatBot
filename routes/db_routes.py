@@ -52,7 +52,7 @@ async def build_database(
 @router.post("/search")
 async def search_documents(
     query: str,
-    top_k: int = 5
+    top_k: int = 2
 ):
     """
     Search documents from permanent vector database.
@@ -177,7 +177,7 @@ async def database_stats():
 @router.post("/query")
 async def rag_query(
     query: str,
-    top_k: int = 5   # optional + default
+    top_k: int = 2   # optional + default
 ):
     """
     Full RAG flow:
