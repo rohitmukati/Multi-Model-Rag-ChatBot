@@ -110,23 +110,29 @@ class FileExtractor:
     # IMAGE EXTRACTION
     # -----------------------------
     def extract_image(self, path: str) -> Dict[str, Any]:
-        try:
-            img_bytes = read_bytes(path)
-            mime = mime_type_for_ext(Path(path).suffix)
+        # try:
+        #     img_bytes = read_bytes(path)
+        #     mime = mime_type_for_ext(Path(path).suffix)
 
-            resp = self.client.models.generate_content(
-                model=self.model,
-                contents=[
-                    types.Part.from_bytes(data=img_bytes, mime_type=mime),
-                    "Extract all text from this image."
-                ]
-            )
+        #     resp = self.client.models.generate_content(
+        #         model=self.model,
+        #         contents=[
+        #             types.Part.from_bytes(data=img_bytes, mime_type=mime),
+        #             "Extract all text from this image."
+        #         ]
+        #     )
 
-            text = resp.text.strip() if hasattr(resp, "text") else ""
-            return {"success": True, "text": text, "file_name": os.path.basename(path), "file_type": "image"}
+        #     text = resp.text.strip() if hasattr(resp, "text") else ""
+        #     return {"success": True, "text": text, "file_name": os.path.basename(path), "file_type": "image"}
 
-        except Exception as e:
-            return {"success": False, "error": str(e)}
+        # except Exception as e:
+        #     return {"success": False, "error": str(e)}
+        return {
+        "success": True,
+        "text": "No data",
+        "file_name": os.path.basename(path),
+        "file_type": "image"
+    }
 
     # -----------------------------
     # AUDIO EXTRACTION (UPDATED)
@@ -189,66 +195,68 @@ class FileExtractor:
         logging.info("=== VIDEO EXTRACTION STARTED ===")
         logging.info(f"Opening video: {path}")
 
-        cap = cv2.VideoCapture(path)
-        if not cap.isOpened():
-            return {"success": False, "error": "Cannot open video"}
+        # cap = cv2.VideoCapture(path)
+        # if not cap.isOpened():
+        #     return {"success": False, "error": "Cannot open video"}
 
-        fps = cap.get(cv2.CAP_PROP_FPS) or 25
-        logging.info(f"Video FPS: {fps}")
+        # fps = cap.get(cv2.CAP_PROP_FPS) or 25
+        # logging.info(f"Video FPS: {fps}")
 
-        frame_interval = int(fps * frame_seconds)
-        logging.info(f"Frame every {frame_seconds}s -> interval {frame_interval}")
+        # frame_interval = int(fps * frame_seconds)
+        # logging.info(f"Frame every {frame_seconds}s -> interval {frame_interval}")
 
-        idx = 0
+        # idx = 0
+        # captions = []
+
+        # while True:
+        #     ret, frame = cap.read()
+        #     if not ret:
+        #         break
+
+        #     if idx % frame_interval == 0:
+        #         time_sec = round(idx / fps, 2)
+        #         logging.info(f"[FRAME] Extracting @ {time_sec}s (frame {idx})")
+
+        #         temp_img = f"_frame_{idx}.jpg"
+        #         cv2.imwrite(temp_img, frame)
+
+        #         with open(temp_img, "rb") as f:
+        #             img_bytes = f.read()
+        #         os.remove(temp_img)
+
+        #         logging.info("[GEMINI] Captioning frame...")
+
+        #         contents = [
+        #             {
+        #                 "role": "user",
+        #                 "parts": [
+        #                     {"text": "Describe this frame in 40-50 words."},
+        #                     {
+        #                         "inline_data": {
+        #                             "mime_type": "image/jpeg",
+        #                             "data": img_bytes
+        #                         }
+        #                     }
+        #                 ]
+        #             }
+        #         ]
+
+        #         try:
+        #             resp = self.client.models.generate_content(
+        #                 model=self.model,
+        #                 contents=contents
+        #             )
+        #             caption = resp.text.strip() if resp.text else ""
+        #         except Exception as e:
+        #             caption = f"[Caption failed: {e}]"
+
+        #         captions.append({"time": time_sec, "caption": caption})
+
+        #     idx += 1
+
+        # cap.release()
+        
         captions = []
-
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                break
-
-            if idx % frame_interval == 0:
-                time_sec = round(idx / fps, 2)
-                logging.info(f"[FRAME] Extracting @ {time_sec}s (frame {idx})")
-
-                temp_img = f"_frame_{idx}.jpg"
-                cv2.imwrite(temp_img, frame)
-
-                with open(temp_img, "rb") as f:
-                    img_bytes = f.read()
-                os.remove(temp_img)
-
-                logging.info("[GEMINI] Captioning frame...")
-
-                contents = [
-                    {
-                        "role": "user",
-                        "parts": [
-                            {"text": "Describe this frame in 40-50 words."},
-                            {
-                                "inline_data": {
-                                    "mime_type": "image/jpeg",
-                                    "data": img_bytes
-                                }
-                            }
-                        ]
-                    }
-                ]
-
-                try:
-                    resp = self.client.models.generate_content(
-                        model=self.model,
-                        contents=contents
-                    )
-                    caption = resp.text.strip() if resp.text else ""
-                except Exception as e:
-                    caption = f"[Caption failed: {e}]"
-
-                captions.append({"time": time_sec, "caption": caption})
-
-            idx += 1
-
-        cap.release()
 
         # Extract audio
         logging.info("[WHISPER] Extracting audio...")
