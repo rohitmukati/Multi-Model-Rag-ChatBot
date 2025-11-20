@@ -76,6 +76,8 @@ class RAGDatabaseBuilder:
                     ])
                     audio_text = extraction_result.get('audio_transcript', '')
                     extracted_text = f"{captions_text}\n\nAudio Transcript:\n{audio_text}"
+                elif extraction_result.get('file_type') == 'json':
+                    extracted_text = extraction_result.get('text', '')
                 else:
                     extracted_text = extraction_result.get('text', '')
                 

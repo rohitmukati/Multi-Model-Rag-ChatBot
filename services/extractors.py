@@ -21,6 +21,7 @@ import whisper
 # PDF / DOCX / Text
 import PyPDF2
 import docx
+import json
 
 # ---------------------------------
 # Config
@@ -103,7 +104,8 @@ class FileExtractor:
             ".m4a": "audio",
             ".mp4": "video",
             ".mov": "video",
-            ".avi": "video"
+            ".avi": "video",
+            ".json": "json"
         }.get(ext, "unknown")
 
     # -----------------------------
@@ -184,6 +186,20 @@ class FileExtractor:
             paras = [p.text.strip() for p in docf.paragraphs if p.text.strip()]
             return {"success": True, "text": "\n\n".join(paras),
                     "file_name": os.path.basename(path), "file_type": "docx"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    # -----------------------------
+    # JSON EXTRACTION
+    # -----------------------------
+    def extract_json(self, path: str) -> Dict[str, Any]:
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            # Convert to string for chunking
+            text = json.dumps(data, indent=2)
+            return {"success": True, "text": text,
+                    "file_name": os.path.basename(path), "file_type": "json"}
         except Exception as e:
             return {"success": False, "error": str(e)}
 
@@ -305,6 +321,8 @@ class FileExtractor:
             return self.extract_docx(path)
         if t == "video":
             return self.extract_video(path)
+        if t == "json":
+            return self.extract_json(path)
 
         return {"success": False, "error": f"Unsupported type: {t}"}
 
