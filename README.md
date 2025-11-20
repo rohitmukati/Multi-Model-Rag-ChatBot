@@ -55,6 +55,9 @@ MULTI-MODEL-RAG-CHATBOT/
 
 ---
 
+## Demo video 
+<h1> <a href="https://www.loom.com/share/5211bffd2fd04960b0149bd3436102e6">Demo Video</a></h1>
+
 ## 🛠️ Installation
 
 ### Prerequisites
