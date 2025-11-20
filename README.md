@@ -1,6 +1,11 @@
-# Multi-Model RAG Chatbot
+# 🤖 Multi-Model RAG Chatbot
 
-A modular, production-ready Retrieval-Augmented Generation (RAG) backend built with **FastAPI**, **ChromaDB**, and **LLM integration** (Gemini/OpenAI). Supports permanent vector database creation, semantic search, full RAG querying, statistics, and cleanup operations.
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.68%2B-green)
+![ChromaDB](https://img.shields.io/badge/ChromaDB-Latest-orange)
+![License](https://img.shields.io/badge/License-MIT-purple)
+
+A modular, production-ready **Retrieval-Augmented Generation (RAG)** backend built with **FastAPI**, **ChromaDB**, and **LLM integration** (Gemini/OpenAI). Supports permanent vector database creation, semantic search, full RAG querying, statistics, and cleanup operations.
 
 ---
 
@@ -55,8 +60,10 @@ MULTI-MODEL-RAG-CHATBOT/
 
 ---
 
-## Demo video 
-<h1> <a href="https://www.loom.com/share/5211bffd2fd04960b0149bd3436102e6">Demo Video</a></h1>
+## 🎥 Demo Video
+
+[**Watch the Project Demo**](https://www.loom.com/share/5211bffd2fd04960b0149bd3436102e6)
+
 
 ## 🛠️ Installation
 
